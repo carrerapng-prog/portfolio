@@ -218,6 +218,8 @@ PROJECTS = [
         "media": [
             ("video", "issca-speakers-lissabon.mp4", "Speaker-Präsentation für die ISSCA-119-Konferenz in Lissabon: "
              "Opener, Vorstellung der Referentinnen und Referenten und Eindrücke von der Bühne."),
+            ("video", "issca-speaker-dinner-peru.mp4", "Recap-Video vom Speaker-Dinner der ISSCA in Peru – vom "
+             "Empfang der Gäste über das Abendessen bis zum gemeinsamen Toast."),
             ("video", "issca-led-logo.mp4", "Logo-Animation für die Haupt-LED-Wand der Bühne im Ultra-Breitformat."),
             ("video-vertical", "issca-live-event.mp4", "Live-Aufnahmen vom ISSCA Global Summit mit den gebrandeten "
              "Opening-Titeln und Motion Graphics auf den LED-Bühnenwänden."),
