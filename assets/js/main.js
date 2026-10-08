@@ -49,7 +49,7 @@
     let order = cards.map((_, i) => i);
     const paint = () => order.forEach((c, pos) => (cards[c].dataset.pos = pos));
     paint();
-    requestAnimationFrame(() => setTimeout(() => stack.classList.add("is-ready"), 150));
+    setTimeout(() => stack.classList.add("is-ready"), 150);
     if (!reduce && cards.length > 1) {
       setInterval(() => {
         if (document.hidden) return;
