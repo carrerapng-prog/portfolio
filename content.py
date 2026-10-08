@@ -323,8 +323,35 @@ GROUPS = [
     {"id": "branding", "home": True, "heading": ("Branding", "Marken mit Charakter."),
      "slugs": ["hermanos-morales", "maximus-detailing", "braunis", "pb-travel"]},
     {"id": "ki", "home": False, "heading": ("KI-Projekte", "Experimente mit KI."),
-     "slugs": ["ki-experimente", "der-ritter", "sora-matcha-co", "venezuela-recap"]},
+     "slugs": ["ki-projekte"]},
 ]
+
+# Alle KI-Arbeiten werden auf einer gemeinsamen Seite "KI-Projekte" gezeigt.
+# Die Reihenfolge hier bestimmt die Reihenfolge der Abschnitte auf der Seite.
+KI_PARTS = ["der-ritter", "sora-matcha-co", "venezuela-recap", "ki-experimente"]
+_by_slug = {p["slug"]: p for p in PROJECTS}
+KI_PROJECT = {
+    "slug": "ki-projekte",
+    "name": "KI-Projekte",
+    "category": "Kurzfilm, Markenwelt, Comedy & Experimente",
+    "title": "KI-Projekte — Film, Branding & Experimente",
+    "heading": "KI-Projekte<br>— Film, Branding & Experimente",
+    "cover": "ritter-cover.jpg",
+    "client": "Eigene Projekte",
+    "year": "2026",
+    "text": [
+        "Eine Sammlung meiner Arbeiten mit künstlicher Intelligenz: ein Kurzfilm, eine komplette Markenwelt, "
+        "eine Comedy-Serie und kurze Experimente mit neuen Werkzeugen.",
+        "Für Bilder, Animation und Ideen nutze ich vor allem Higgsfield, Kling und Claude – Schnitt und Finishing "
+        "mache ich in Premiere Pro und After Effects.",
+    ],
+    "services": ["Künstliche Intelligenz", "KI Video", "Bildgenerierung", "Videoschnitt", "Motion Design"],
+    "parts": [(slug, _by_slug[slug]["name"]) for slug in KI_PARTS],
+    "media": [m for slug in KI_PARTS for m in
+              [("section", slug, _by_slug[slug]["name"], _by_slug[slug]["category"], _by_slug[slug]["text"])]
+              + _by_slug[slug]["media"]],
+}
+PROJECTS = [p for p in PROJECTS if p["slug"] not in KI_PARTS] + [KI_PROJECT]
 
 # Bilder im Kartenstapel oben auf der Startseite
 HERO_STACK = ["novita-muebles", "issca", "hermanos-morales", "maximus-detailing"]
