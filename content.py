@@ -142,6 +142,29 @@ PROJECTS = [
         ],
     },
     {
+        "slug": "ki-experimente",
+        "name": "KI-Experimente",
+        "category": "Higgsfield & KI-Video",
+        "title": "KI-Experimente — Higgsfield & KI-Video",
+        "heading": "KI-Experimente<br>— Higgsfield & KI-Video",
+        "cover": "ki-experimente-cover.jpg",
+        "client": "Eigenes Projekt",
+        "year": "2026",
+        "text": [
+            "Kurze Experimente, in denen ich neue KI-Werkzeuge ausprobiere und ihre Grenzen teste – vom Austausch "
+            "einer Person in einer echten Aufnahme bis zu Übergängen zwischen digitaler und realer Welt.",
+            "Beide Clips sind mit Higgsfield entstanden: einmal mit Genjutsu auf Basis eines echten Videos, einmal als "
+            "FPV-Kamerafahrt, die aus einer leuchtenden, digitalen Landschaft in eine reale Szene am Bergsee fliegt.",
+        ],
+        "services": ["Künstliche Intelligenz", "KI Video", "Higgsfield Genjutsu"],
+        "media": [
+            ("video", "ki-genjutsu-vergleich.mp4", "Vorher/Nachher: links die Originalaufnahme, rechts die KI-Version mit "
+             "Higgsfield Genjutsu. Die Person wurde ersetzt, Kamerabewegung, Licht und Perspektive bleiben erhalten."),
+            ("video-vertical", "ki-fpv-bergsee.mp4", "FPV-Kamerafahrt im Hochformat: Eine digitale Neon-Landschaft "
+             "verwandelt sich im Flug in eine reale Szene an einem Bergsee."),
+        ],
+    },
+    {
         "slug": "der-ritter",
         "name": "Der Ritter",
         "category": "KI-Kurzfilm",
@@ -300,7 +323,7 @@ GROUPS = [
     {"id": "branding", "home": True, "heading": ("Branding", "Marken mit Charakter."),
      "slugs": ["hermanos-morales", "maximus-detailing", "braunis", "pb-travel"]},
     {"id": "ki", "home": False, "heading": ("KI-Projekte", "Experimente mit KI."),
-     "slugs": ["der-ritter", "sora-matcha-co", "venezuela-recap"]},
+     "slugs": ["ki-experimente", "der-ritter", "sora-matcha-co", "venezuela-recap"]},
 ]
 
 # Bilder im Kartenstapel oben auf der Startseite
