@@ -162,8 +162,12 @@ def group_section(g, base, first=False, link=True):
 def page_home():
     base = ""
     stack = "".join(
-        f'<div class="stack-card" style="--i:{i}"><img src="assets/img/{BY_SLUG[s]["cover"]}" alt=""></div>'
-        for i, s in enumerate(HERO_STACK))
+        f'<a class="stack-card" href="projects/{s}/" aria-label="{escape(BY_SLUG[s]["name"])}">'
+        f'<img src="assets/img/{BY_SLUG[s]["cover"]}" alt="">'
+        f'<span class="stack-label">{escape(BY_SLUG[s]["name"])}<small>{escape(BY_SLUG[s]["category"])}</small></span></a>'
+        for s in HERO_STACK)
+    dots = "".join(f'<button class="stack-dot" aria-label="{escape(BY_SLUG[s]["name"])} zeigen"></button>'
+                   for s in HERO_STACK)
     tools = "".join(f'<li class="tool" title="{name}" aria-label="{name}">{icon}</li>'
                     for name, icon in (TOOL_ICONS[t] for t in TOOLS))
     services = "".join(f'<li class="service reveal"><span class="service-icon">{SERVICE_ICONS[i]}</span>{escape(t)}</li>'
@@ -179,7 +183,10 @@ def page_home():
       <p class="lead">{HERO['text']}</p>
       <a class="btn" href="mailto:{SITE['email']}"><img src="assets/img/avatar.png" alt="" width="28" height="28">{HERO['cta']}</a>
     </div>
-    <div class="stack" data-stack aria-hidden="true">{stack}</div>
+    <div class="stack-wrap">
+      <div class="stack" data-stack>{stack}</div>
+      <div class="stack-dots" data-stack-dots>{dots}</div>
+    </div>
   </section>
 
 {groups}

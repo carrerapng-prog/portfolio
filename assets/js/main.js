@@ -42,26 +42,48 @@
     });
   });
 
-  // Kartenstapel im Hero
+  // Kartenstapel im Hero: läuft automatisch, Karten und Punkte sind anklickbar
   const stack = document.querySelector("[data-stack]");
   if (stack) {
     const cards = [...stack.children];
+    const dots = [...document.querySelectorAll("[data-stack-dots] button")];
     let order = cards.map((_, i) => i);
-    const paint = () => order.forEach((c, pos) => (cards[c].dataset.pos = pos));
+    let busy = false;
+    const paint = () => {
+      order.forEach((c, pos) => (cards[c].dataset.pos = pos));
+      dots.forEach((d, i) => d.classList.toggle("is-active", i === order[0]));
+    };
+    // Karte i nach vorne holen
+    const show = (i) => {
+      if (busy || order[0] === i) return;
+      busy = true;
+      const top = cards[order[0]];
+      top.classList.add("is-leaving");
+      setTimeout(() => {
+        top.classList.remove("is-leaving");
+        while (order[0] !== i) order.push(order.shift());
+        paint();
+        busy = false;
+      }, 450);
+    };
+    const next = () => show(order[1]);
     paint();
     setTimeout(() => stack.classList.add("is-ready"), 150);
-    if (!reduce && cards.length > 1) {
-      setInterval(() => {
-        if (document.hidden) return;
-        const top = cards[order[0]];
-        top.classList.add("is-leaving");
-        setTimeout(() => {
-          top.classList.remove("is-leaving");
-          order.push(order.shift());
-          paint();
-        }, 550);
-      }, 3200);
-    }
+
+    cards.forEach((card, i) => card.addEventListener("click", (e) => {
+      if (order[0] !== i) { e.preventDefault(); show(i); restart(); }
+    }));
+    dots.forEach((dot, i) => dot.addEventListener("click", () => { show(i); restart(); }));
+
+    let timer = null, hovering = false;
+    const restart = () => {
+      clearInterval(timer);
+      if (reduce || cards.length < 2) return;
+      timer = setInterval(() => { if (!document.hidden && !hovering) next(); }, 3000);
+    };
+    stack.addEventListener("mouseenter", () => (hovering = true));
+    stack.addEventListener("mouseleave", () => (hovering = false));
+    restart();
   }
 
   // Wechselnde Wörter im Footer
