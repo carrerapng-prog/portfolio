@@ -86,12 +86,6 @@
     restart();
   }
 
-  // Sprungmarken (#abschnitt) nach dem Laden zuverlässig anspringen
-  if (location.hash.length > 1) {
-    const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
-    if (target) addEventListener("load", () => setTimeout(() => target.scrollIntoView({ behavior: "instant" }), 50));
-  }
-
   // Wechselnde Wörter im Footer
   document.querySelectorAll(".words").forEach((box) => {
     const words = [...box.children];

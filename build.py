@@ -4,7 +4,7 @@ from pathlib import Path
 from html import escape
 
 from content import (SITE, HERO, TOOLS, SERVICES, ABOUT, FOOTER_WORDS,
-                     PROJECTS, GROUPS, HERO_STACK, ALL_PROJECTS, KI_PARTS)
+                     PROJECTS, GROUPS, HERO_STACK, ALL_PROJECTS)
 
 ROOT = Path(__file__).parent
 BY_SLUG = {p["slug"]: p for p in PROJECTS}
@@ -230,11 +230,6 @@ def page_projects():
 
 
 def media_block(m, base):
-    if m[0] == "section":
-        _, sid, name, category, text = m
-        paras = "".join(f"<p>{escape(t)}</p>" for t in text)
-        return (f'<section class="subproject" id="{sid}"><p class="small-label">{escape(category)}</p>'
-                f'<h2 class="h2 reveal">{escape(name)}</h2><div class="project-text">{paras}</div></section>')
     kind, src, caption = m
     if kind.startswith("video"):
         srcs = src if isinstance(src, list) else [src]
@@ -264,10 +259,6 @@ def page_project(p):
     link = (f'<a class="text-link" href="{p["link"][1]}" target="_blank" rel="noopener">{p["link"][0]} {ARROW}</a>'
             if p.get("link") else "")
     blocks = "".join(media_block(m, base) for m in p["media"])
-    parts = ""
-    if p.get("parts"):
-        parts = ('<p class="small-label">Inhalt</p><ul class="chips toc">' +
-                 "".join(f'<li><a href="#{sid}">{escape(name)}</a></li>' for sid, name in p["parts"]) + "</ul>")
     more_cards = "".join(card(m, base) for m in more)
     return head(f"{p['title']} | {SITE['name']}, Grafikdesigner", " ".join(p["text"])[:160], base) + nav(base) + f"""
 <main>
@@ -277,7 +268,6 @@ def page_project(p):
     <div class="project-text">{text}</div>
     <p class="small-label">Meine Aufgaben</p>
     <ul class="chips">{chips}</ul>
-    {parts}
     {link}
   </section>
   <section class="section blocks">{blocks}</section>
@@ -320,15 +310,6 @@ def page_privacy():
 </main>""" + footer(base)
 
 
-def page_redirect(target):
-    return f"""<!doctype html>
-<html lang="de"><head><meta charset="utf-8"><title>Weiterleitung</title>
-<meta http-equiv="refresh" content="0; url={target}"><link rel="canonical" href="{target}">
-<script>location.replace("{target}")</script></head>
-<body><a href="{target}">Weiter zu den KI-Projekten</a></body></html>
-"""
-
-
 def write(path, html):
     out = ROOT / path
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -342,6 +323,3 @@ if __name__ == "__main__":
     for p in PROJECTS:
         write(f"projects/{p['slug']}/index.html", page_project(p))
     write("datenschutz/index.html", page_privacy())
-    # Alte Adressen der einzelnen KI-Projekte leiten auf die gemeinsame Seite weiter
-    for slug in KI_PARTS:
-        write(f"projects/{slug}/index.html", page_redirect(f"../ki-projekte/#{slug}"))
