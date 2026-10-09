@@ -6,13 +6,18 @@ SITE = {
     "title": "Ernesto Carrera | Grafikdesigner, Motion Designer und Video Editor",
     "description": "Portfolio von Ernesto Carrera, Grafikdesigner, Motion Designer und Video Editor: "
                    "Außenwerbung, Markenidentität, Bewegtbild und KI-Projekte.",
-    "email": "carrera.desings@gmail.com",
+    "email": "carrera.png@gmail.com",
     "available": "Verfügbar ab Februar 2027",
     "instagram": "https://www.instagram.com/carrera.png/",
     "behance": "https://www.behance.net/ernestojccarrera",
     "linkedin": "https://www.linkedin.com/in/ernesto-carrera-8a390327a/",
     "year": 2026,
     "url": "https://ernestocarrera.de/",
+    # Angaben für das Impressum
+    "legal_name": "Ernesto Javier Carrera Reyna",
+    "street": "Osterkampsweg 3",
+    "city": "32361 Preußisch Oldendorf",
+    "phone": "+49 163 6937397",
 }
 
 HERO = {
@@ -21,7 +26,7 @@ HERO = {
     "cta": "Kontakt aufnehmen",
 }
 
-TOOLS = ["Ae", "Ai", "Ps", "Pr", "framer", "claude", "chatgpt"]
+TOOLS = ["Ae", "Ai", "Ps", "Pr", "framer", "higgsfield", "claude", "chatgpt"]
 
 SERVICES = [
     ("billboard", "Außenwerbung & POP"),

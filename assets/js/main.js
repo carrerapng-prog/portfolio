@@ -112,21 +112,25 @@
     restart();
   }
 
-  // Wechselnde Wörter im Footer
-  document.querySelectorAll(".words").forEach((box) => {
-    const words = [...box.children];
+  // Wechselnde Wörter im Footer: im Text steht immer nur das aktuelle Wort
+  document.querySelectorAll("[data-words]").forEach((box) => {
+    const words = box.dataset.words.split(",");
     if (words.length < 2 || reduce) return;
     let i = 0;
     setInterval(() => {
-      const cur = words[i];
+      if (document.hidden) return;
       i = (i + 1) % words.length;
-      const next = words[i];
+      const cur = box.querySelector(".word.is-active");
+      const next = document.createElement("span");
+      next.className = "word";
+      next.textContent = words[i];
+      box.appendChild(next);
+      void next.offsetWidth; // Startzustand rendern, damit die Einblendung animiert
+      next.classList.add("is-active");
       cur.classList.remove("is-active");
       cur.classList.add("is-out");
-      next.classList.remove("is-out");
-      next.classList.add("is-active");
-      box.setAttribute("aria-label", next.textContent);
-      setTimeout(() => cur.classList.remove("is-out"), 700);
+      cur.setAttribute("aria-hidden", "true");
+      setTimeout(() => cur.remove(), 700);
     }, 2400);
   });
 })();

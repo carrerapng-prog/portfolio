@@ -70,6 +70,7 @@ TOOL_ICONS = {
     "Ai": ("Illustrator", '<span class="tool-txt">Ai</span>'),
     "Ps": ("Photoshop", '<span class="tool-txt">Ps</span>'),
     "Pr": ("Premiere Pro", '<span class="tool-txt">Pr</span>'),
+    "higgsfield": ("Higgsfield", '<span class="tool-txt">Hf</span>'),
     "framer": ("Framer", '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M5 2h14v7h-7zM5 9h7l7 7H12v6l-7-7z"/></svg>'),
     "claude": ("Claude", '<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">'
                + "".join(f'<path d="M12 12 12 3" transform="rotate({a} 12 12)"/>' for a in range(0, 360, 30)) + '</svg>'),
@@ -131,13 +132,12 @@ def nav(base, current=""):
 
 
 def footer(base):
-    words = "".join(f'<span class="word{" is-active" if i == 0 else ""}">{w}</span>' for i, w in enumerate(FOOTER_WORDS))
     return f"""
 </div>
 <footer class="footer">
   <div class="footer-inner">
     <h2 class="footer-title">
-      <span class="ft-line">Lass uns <span class="sr-only">{FOOTER_WORDS[0]}</span><span class="words" aria-hidden="true">{words}</span></span>
+      <span class="ft-line">Lass uns <span class="words" data-words="{",".join(FOOTER_WORDS)}"><span class="word is-active">{FOOTER_WORDS[0]}</span></span> </span>
       <span class="ft-muted">gemeinsam großartige Arbeit.</span>
     </h2>
     <div class="footer-contact">
@@ -146,7 +146,7 @@ def footer(base):
     </div>
     <div class="footer-meta">
       <div><p class="label">Menü</p><a href="{base}projects/">Arbeiten</a><a href="{base}#branding">Branding</a><a href="{base}#services">Kompetenzen</a></div>
-      <div><p class="label">Rechtliches</p><a href="{base}datenschutz/">Datenschutz</a></div>
+      <div><p class="label">Rechtliches</p><a href="{base}impressum/">Impressum</a><a href="{base}datenschutz/">Datenschutz</a></div>
       <p class="copy">© {SITE['year']} {SITE['name']}</p>
     </div>
   </div>
@@ -201,7 +201,7 @@ def page_home():
     dots += ('<button class="stack-pause" type="button" aria-label="Automatischen Wechsel pausieren" aria-pressed="false">'
              '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">'
              '<path class="i-pause" d="M7 5h3v14H7zM14 5h3v14h-3z"/><path class="i-play" d="M8 5v14l11-7z"/></svg></button>')
-    tools = "".join(f'<li class="tool" title="{name}" aria-label="{name}">{icon}</li>'
+    tools = "".join(f'<li class="tool" title="{name}"><span aria-hidden="true">{icon}</span><span class="sr-only">{name}</span></li>'
                     for name, icon in (TOOL_ICONS[t] for t in TOOLS))
     services = "".join(f'<li class="service reveal"><span class="service-icon">{SERVICE_ICONS[i]}</span>{escape(t)}</li>'
                        for i, t in SERVICES)
@@ -323,7 +323,7 @@ def page_privacy():
   <section class="project-head legal">
     <h1 class="h1">Datenschutz&shy;erklärung</h1>
     <h2>Verantwortlicher</h2>
-    <p>{SITE['name']}<br>E-Mail: <a href="mailto:{SITE['email']}">{SITE['email']}</a></p>
+    <p>{address()}<br>E-Mail: <a href="mailto:{SITE['email']}">{SITE['email']}</a></p>
     <h2>Allgemeines</h2>
     <p>Diese Website ist ein persönliches Portfolio. Es gibt keine Kontaktformulare, kein Nutzerkonto und keine
     Analyse- oder Marketing-Tools. Es werden keine Cookies gesetzt. Schriften und Medien werden direkt von diesem
@@ -346,6 +346,26 @@ def page_privacy():
 </main>""" + footer(base)
 
 
+def address():
+    return "<br>".join(escape(x) for x in (SITE["legal_name"], SITE["street"], SITE["city"]) if x)
+
+
+def page_impressum():
+    base = "../"
+    tel = SITE["phone"].replace(" ", "")
+    return head(f"Impressum | {SITE['name']}", "Impressum", base, "impressum/") + nav(base) + f"""
+<main id="main">
+  <section class="project-head legal">
+    <h1 class="h1">Impressum</h1>
+    <h2>Angaben gemäß § 5 DDG</h2>
+    <p>{address()}</p>
+    <h2>Kontakt</h2>
+    <p>Telefon: <a href="tel:{tel}">{escape(SITE['phone'])}</a><br>
+    E-Mail: <a href="mailto:{SITE['email']}">{SITE['email']}</a></p>
+  </section>
+</main>""" + footer(base)
+
+
 def page_404():
     base = SITE["url"]  # absolute Pfade, weil die 404-Seite unter jeder Adresse ausgeliefert wird
     return head(f"Seite nicht gefunden | {SITE['name']}", "Diese Seite gibt es nicht.", base, "404.html") + nav(base) + f"""
@@ -363,7 +383,7 @@ def page_404():
 
 
 def sitemap():
-    paths = ["", "projects/", "datenschutz/"] + [f"projects/{p['slug']}/" for p in PROJECTS]
+    paths = ["", "projects/", "impressum/", "datenschutz/"] + [f"projects/{p['slug']}/" for p in PROJECTS]
     urls = "".join(f"  <url><loc>{SITE['url']}{x}</loc></url>\n" for x in paths)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n'
 
@@ -381,5 +401,6 @@ if __name__ == "__main__":
     for p in PROJECTS:
         write(f"projects/{p['slug']}/index.html", page_project(p))
     write("datenschutz/index.html", page_privacy())
+    write("impressum/index.html", page_impressum())
     write("404.html", page_404())
     write("sitemap.xml", sitemap())
