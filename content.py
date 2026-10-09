@@ -310,7 +310,7 @@ PROJECTS = [
         "services": ["Außenwerbung", "POP-Material"],
         "media": [
             ("img", ["novita-rollup-artie.jpg", "novita-rollup-trimmel.jpg"], "Roll-up-Banner im Showroom für die Marken Artie und Trimmel."),
-            ("img", ["novita-billboard-higold.png"], "Großflächenwerbung an einer Ausfallstraße, Sortiment „Higold“."),
+            ("img", ["novita-billboard-higold.jpg"], "Großflächenwerbung an einer Ausfallstraße, Sortiment „Higold“."),
             ("img", ["novita-caracas.jpg"], "Straßenszene in Caracas mit Werbetafel im Hintergrund."),
             ("img", ["novita-cover.jpg"], "Bauzaun-Werbebanner in Naguanagua, Valencia – das auffälligste Motiv der Kampagne."),
         ],

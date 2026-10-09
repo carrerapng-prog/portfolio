@@ -8,6 +8,30 @@ from content import (SITE, HERO, TOOLS, SERVICES, ABOUT, FOOTER_WORDS,
 
 ROOT = Path(__file__).parent
 BY_SLUG = {p["slug"]: p for p in PROJECTS}
+_SIZES = {}
+
+
+def img_size(name):
+    """Breite und Höhe eines JPEG/PNG aus assets/img lesen (ohne externe Bibliotheken)."""
+    if name not in _SIZES:
+        data = (ROOT / "assets/img" / name).read_bytes()
+        if data[:8] == b"\x89PNG\r\n\x1a\n":
+            _SIZES[name] = (int.from_bytes(data[16:20], "big"), int.from_bytes(data[20:24], "big"))
+        else:
+            i = 2
+            while i < len(data):
+                marker, length = data[i + 1], int.from_bytes(data[i + 2:i + 4], "big")
+                if 0xC0 <= marker <= 0xCF and marker not in (0xC4, 0xC8, 0xCC):
+                    _SIZES[name] = (int.from_bytes(data[i + 7:i + 9], "big"), int.from_bytes(data[i + 5:i + 7], "big"))
+                    break
+                i += 2 + length
+    return _SIZES[name]
+
+
+def img(base, name, alt="", lazy=True, extra=""):
+    w, h = img_size(name)
+    loading = ' loading="lazy" decoding="async"' if lazy else ""
+    return f'<img src="{base}assets/img/{name}" alt="{escape(alt)}" width="{w}" height="{h}"{loading}{extra}>'
 
 # ---------- Icons ----------
 def svg(body, size=20, sw=1.8):
@@ -61,7 +85,8 @@ def social_links(cls="social"):
         for k, (icon, label) in SOCIAL.items()) + "</div>"
 
 
-def head(title, description, base):
+def head(title, description, base, path="", image="ritter-cover.jpg"):
+    url = SITE["url"] + path
     return f"""<!doctype html>
 <html lang="de">
 <head>
@@ -73,29 +98,35 @@ def head(title, description, base):
 <meta property="og:type" content="website">
 <meta property="og:title" content="{escape(title)}">
 <meta property="og:description" content="{escape(description)}">
-<meta property="og:image" content="{SITE['url']}assets/img/ritter-cover.jpg">
-<meta property="og:url" content="{SITE['url']}">
+<meta property="og:image" content="{SITE['url']}assets/img/{image}">
+<meta property="og:url" content="{url}">
+<meta property="og:locale" content="de_DE">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="{base}assets/img/avatar.png">
+<meta name="theme-color" content="#fafafa">
+<link rel="canonical" href="{url}">
+<link rel="icon" type="image/png" href="{base}assets/img/avatar-64.png">
+<link rel="apple-touch-icon" href="{base}assets/img/apple-touch-icon.png">
 <link rel="preload" href="{base}assets/fonts/switzer-500.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="{base}assets/css/style.css">
 <script defer src="{base}assets/js/main.js"></script>
 </head>
 <body>
+<a class="skip-link" href="#main">Zum Inhalt springen</a>
 <div class="frame">"""
 
 
-def nav(base):
+def nav(base, current=""):
+    cur = ' aria-current="page"' if current == "projects" else ""
     return f"""
 <header class="nav" data-nav>
-  <a class="nav-brand" href="{base}"><img src="{base}assets/img/avatar.png" alt="" width="32" height="32"><span>{SITE['name']}</span></a>
-  <nav class="nav-links">
-    <a href="{base}projects/">Arbeiten</a>
+  <a class="nav-brand" href="{base if base else './'}" aria-label="Startseite"><img src="{base}assets/img/avatar-64.png" alt="" width="32" height="32"><span translate="no">{SITE['name']}</span></a>
+  <nav class="nav-links" id="nav-links" aria-label="Hauptmenü">
+    <a href="{base}projects/"{cur}>Arbeiten</a>
     <a href="{base}#branding">Branding</a>
     <a href="{base}#about">Über mich</a>
     <a class="nav-cta" href="mailto:{SITE['email']}">Kontakt</a>
   </nav>
-  <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false"><i></i><i></i><i></i></button>
+  <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-links"><i></i><i></i><i></i></button>
 </header>"""
 
 
@@ -106,7 +137,7 @@ def footer(base):
 <footer class="footer">
   <div class="footer-inner">
     <h2 class="footer-title">
-      <span class="ft-line">Lass uns <span class="words" aria-label="{FOOTER_WORDS[0]}">{words}</span></span>
+      <span class="ft-line">Lass uns <span class="sr-only">{FOOTER_WORDS[0]}</span><span class="words" aria-hidden="true">{words}</span></span>
       <span class="ft-muted">gemeinsam großartige Arbeit.</span>
     </h2>
     <div class="footer-contact">
@@ -119,7 +150,7 @@ def footer(base):
       <p class="copy">© {SITE['year']} {SITE['name']}</p>
     </div>
   </div>
-  <div class="footer-giant" aria-hidden="true">ERNESTO</div>
+  <div class="footer-giant" aria-hidden="true" translate="no">ERNESTO</div>
 </footer>
 </body>
 </html>
@@ -127,10 +158,9 @@ def footer(base):
 
 
 def card(p, base, eager=False):
-    loading = "eager" if eager else "lazy"
     return f"""
     <a class="card reveal" href="{base}projects/{p['slug']}/">
-      <div class="card-media"><img src="{base}assets/img/{p['cover']}" alt="{escape(p['name'])}" loading="{loading}"></div>
+      <div class="card-media">{img(base, p['cover'], p['name'], lazy=not eager)}</div>
       <div class="card-info">
         <div><h3>{escape(p['name'])}</h3><p>{escape(p['category'])}</p></div>
         <span class="card-link">{ARROW}Projekt ansehen</span>
@@ -163,28 +193,31 @@ def page_home():
     base = ""
     stack = "".join(
         f'<a class="stack-card" href="projects/{s}/" aria-label="{escape(BY_SLUG[s]["name"])}">'
-        f'<img src="assets/img/{BY_SLUG[s]["cover"]}" alt="">'
+        f'{img("", BY_SLUG[s]["cover"], lazy=False, extra=chr(32) + "fetchpriority=" + chr(34) + ("high" if k == 0 else "auto") + chr(34))}'
         f'<span class="stack-label">{escape(BY_SLUG[s]["name"])}<small>{escape(BY_SLUG[s]["category"])}</small></span></a>'
-        for s in HERO_STACK)
-    dots = "".join(f'<button class="stack-dot" aria-label="{escape(BY_SLUG[s]["name"])} zeigen"></button>'
+        for k, s in enumerate(HERO_STACK))
+    dots = "".join(f'<button class="stack-dot" type="button" aria-label="{escape(BY_SLUG[s]["name"])} zeigen"></button>'
                    for s in HERO_STACK)
+    dots += ('<button class="stack-pause" type="button" aria-label="Automatischen Wechsel pausieren" aria-pressed="false">'
+             '<svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true">'
+             '<path class="i-pause" d="M7 5h3v14H7zM14 5h3v14h-3z"/><path class="i-play" d="M8 5v14l11-7z"/></svg></button>')
     tools = "".join(f'<li class="tool" title="{name}" aria-label="{name}">{icon}</li>'
                     for name, icon in (TOOL_ICONS[t] for t in TOOLS))
     services = "".join(f'<li class="service reveal"><span class="service-icon">{SERVICE_ICONS[i]}</span>{escape(t)}</li>'
                        for i, t in SERVICES)
     about = "".join(f"<p>{escape(t)}</p>" for t in ABOUT)
     groups = "".join(group_section(g, base, first=(k == 0)) for k, g in enumerate(x for x in GROUPS if x["home"]))
-    return head(SITE["title"], SITE["description"], base) + nav(base) + f"""
-<main>
+    return head(SITE["title"], SITE["description"], base, "", HERO_STACK and BY_SLUG[HERO_STACK[0]]["cover"]) + nav(base) + f"""
+<main id="main">
   <section class="hero">
     <div class="hero-text">
       <p class="badge"><span class="dot"></span>{SITE['available']}</p>
       <h1 class="display">{HERO['title']}</h1>
       <p class="lead">{HERO['text']}</p>
-      <a class="btn" href="mailto:{SITE['email']}"><img src="assets/img/avatar.png" alt="" width="28" height="28">{HERO['cta']}</a>
+      <a class="btn" href="mailto:{SITE['email']}"><img src="assets/img/avatar-64.png" alt="" width="28" height="28">{HERO['cta']}</a>
     </div>
     <div class="stack-wrap">
-      <div class="stack" data-stack>{stack}</div>
+      <div class="stack" data-stack aria-roledescription="Karussell" aria-label="Ausgewählte Projekte">{stack}</div>
       <div class="stack-dots" data-stack-dots>{dots}</div>
     </div>
   </section>
@@ -204,7 +237,7 @@ def page_home():
     <div class="about">
       <div class="about-card reveal">
         <div class="portrait">
-          <img src="assets/img/portrait.png" alt="Porträt von Ernesto Carrera" loading="lazy">
+          {img("", "portrait.png", "Porträt von Ernesto Carrera")}
           {social_links("social social-overlay")}
         </div>
         <p class="about-name">Ernesto Carrera</p>
@@ -219,8 +252,9 @@ def page_home():
 def page_projects():
     base = "../"
     groups = "".join(group_section(g, base, first=(k == 0)) for k, g in enumerate(GROUPS))
-    return head(f"Arbeiten | {SITE['name']}", "Eine Auswahl meiner Projekte aus Außenwerbung, Bewegtbild, Branding und KI.", base) + nav(base) + f"""
-<main>
+    return head(f"Arbeiten | {SITE['name']}", "Eine Auswahl meiner Projekte aus Außenwerbung, Bewegtbild, Branding und KI.",
+                base, "projects/") + nav(base, "projects") + f"""
+<main id="main">
   <section class="page-head">
     <h1 class="display reveal"><span class="muted">Meine</span><br>Arbeiten</h1>
     <p class="lead">Eine Auswahl meiner Projekte aus Außenwerbung, Bewegtbild, Branding und KI.</p>
@@ -238,12 +272,11 @@ def media_block(m, base):
                        f'preload="metadata" data-autoplay></video></div>' for v in srcs)
         inner = f'<div class="media-row">{vids}</div>' if len(srcs) > 1 else vids
     elif kind == "sheet":
-        imgs = "".join(f'<img src="{base}assets/img/{s}" alt="" loading="lazy">' for s in src)
+        imgs = "".join(img(base, s, caption if k == 0 else "") for k, s in enumerate(src))
         inner = f'<div class="media sheet">{imgs}</div>'
     else:
         cls = "media-row" if len(src) > 1 else ""
-        imgs = "".join(f'<div class="media"><img src="{base}assets/img/{s}" alt="{escape(caption)}" loading="lazy"></div>'
-                       for s in src)
+        imgs = "".join(f'<div class="media">{img(base, s, caption)}</div>' for s in src)
         inner = f'<div class="{cls}">{imgs}</div>' if cls else imgs
     return f'<figure class="block reveal">{inner}<figcaption>{escape(caption)}</figcaption></figure>'
 
@@ -260,8 +293,11 @@ def page_project(p):
             if p.get("link") else "")
     blocks = "".join(media_block(m, base) for m in p["media"])
     more_cards = "".join(card(m, base) for m in more)
-    return head(f"{p['title']} | {SITE['name']}, Grafikdesigner", " ".join(p["text"])[:160], base) + nav(base) + f"""
-<main>
+    desc = " ".join(p["text"])
+    desc = desc if len(desc) <= 160 else desc[:157].rsplit(" ", 1)[0] + "…"
+    return head(f"{p['title']} | {SITE['name']}, Grafikdesigner", desc, base,
+                f"projects/{p['slug']}/", p["cover"]) + nav(base, "projects") + f"""
+<main id="main">
   <section class="project-head">
     <h1 class="h1 reveal">{p['heading']}</h1>
     <dl class="meta"><div><dt>Kunde</dt><dd>{escape(p['client'])}</dd></div><div><dt>Jahr</dt><dd>{p['year']}</dd></div></dl>
@@ -272,7 +308,7 @@ def page_project(p):
   </section>
   <section class="section blocks">{blocks}</section>
   <section class="section">
-    <h2 class="h2 reveal"><span class="muted">More</span> Projects</h2>
+    <h2 class="h2 reveal"><span class="muted">Weitere</span> Projekte</h2>
     <div class="grid">{more_cards}
     </div>
     {all_projects_link(base)}
@@ -282,32 +318,54 @@ def page_project(p):
 
 def page_privacy():
     base = "../"
-    return head(f"Datenschutz | {SITE['name']}", "Datenschutzerklärung", base) + nav(base) + f"""
-<main>
+    return head(f"Datenschutz | {SITE['name']}", "Datenschutzerklärung", base, "datenschutz/") + nav(base) + f"""
+<main id="main">
   <section class="project-head legal">
     <h1 class="h1">Datenschutz&shy;erklärung</h1>
-    <h3>Verantwortlicher</h3>
+    <h2>Verantwortlicher</h2>
     <p>{SITE['name']}<br>E-Mail: <a href="mailto:{SITE['email']}">{SITE['email']}</a></p>
-    <h3>Allgemeines</h3>
+    <h2>Allgemeines</h2>
     <p>Diese Website ist ein persönliches Portfolio. Es gibt keine Kontaktformulare, kein Nutzerkonto und keine
     Analyse- oder Marketing-Tools. Es werden keine Cookies gesetzt. Schriften und Medien werden direkt von diesem
     Server geladen, nicht von Drittanbietern.</p>
-    <h3>Server-Logfiles</h3>
+    <h2>Server-Logfiles</h2>
     <p>Beim Aufruf der Website verarbeitet der Hosting-Anbieter technisch notwendige Daten (z.&nbsp;B. IP-Adresse,
     Datum und Uhrzeit, aufgerufene Seite, Browsertyp), um die Website auszuliefern und ihre Sicherheit zu gewährleisten
     (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;f DSGVO). Diese Daten werden nicht mit anderen Datenquellen zusammengeführt.</p>
-    <h3>Kontakt per E-Mail</h3>
+    <h2>Kontakt per E-Mail</h2>
     <p>Wenn du mir eine E-Mail schreibst, verarbeite ich deine Angaben ausschließlich zur Bearbeitung deiner Anfrage
     (Art.&nbsp;6 Abs.&nbsp;1 lit.&nbsp;b und f DSGVO) und lösche sie, sobald sie nicht mehr benötigt werden.</p>
-    <h3>Externe Links</h3>
+    <h2>Externe Links</h2>
     <p>Diese Website verlinkt auf Instagram, Behance und LinkedIn. Erst wenn du einen dieser Links anklickst, gelten
     die Datenschutzbestimmungen des jeweiligen Anbieters.</p>
-    <h3>Deine Rechte</h3>
+    <h2>Deine Rechte</h2>
     <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit
     und Widerspruch sowie das Recht, dich bei einer Datenschutz-Aufsichtsbehörde zu beschweren. Schreib mir dazu
     einfach an die oben genannte E-Mail-Adresse.</p>
   </section>
 </main>""" + footer(base)
+
+
+def page_404():
+    base = SITE["url"]  # absolute Pfade, weil die 404-Seite unter jeder Adresse ausgeliefert wird
+    return head(f"Seite nicht gefunden | {SITE['name']}", "Diese Seite gibt es nicht.", base, "404.html") + nav(base) + f"""
+<main id="main">
+  <section class="page-head notfound">
+    <p class="small-label">Fehler 404</p>
+    <h1 class="display"><span class="muted">Diese Seite</span><br>gibt es nicht.</h1>
+    <p class="lead">Vielleicht wurde sie verschoben. Hier geht es weiter:</p>
+    <div class="notfound-links">
+      <a class="btn" href="{base}">Zur Startseite</a>
+      <a class="text-link" href="{base}projects/">Alle Projekte ansehen {ARROW}</a>
+    </div>
+  </section>
+</main>""" + footer(base)
+
+
+def sitemap():
+    paths = ["", "projects/", "datenschutz/"] + [f"projects/{p['slug']}/" for p in PROJECTS]
+    urls = "".join(f"  <url><loc>{SITE['url']}{x}</loc></url>\n" for x in paths)
+    return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n'
 
 
 def write(path, html):
@@ -323,3 +381,5 @@ if __name__ == "__main__":
     for p in PROJECTS:
         write(f"projects/{p['slug']}/index.html", page_project(p))
     write("datenschutz/index.html", page_privacy())
+    write("404.html", page_404())
+    write("sitemap.xml", sitemap())

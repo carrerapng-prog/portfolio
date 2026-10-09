@@ -8,13 +8,19 @@
     const onScroll = () => {
       const compact = scrollY > 120;
       nav.classList.toggle("is-compact", compact);
-      if (!compact) nav.classList.remove("is-open");
+      if (!compact) { nav.classList.remove("is-open"); toggle.setAttribute("aria-expanded", false); }
     };
     addEventListener("scroll", onScroll, { passive: true });
     onScroll();
-    toggle.addEventListener("click", () => {
-      const open = nav.classList.toggle("is-open");
+    const setOpen = (open) => {
+      nav.classList.toggle("is-open", open);
       toggle.setAttribute("aria-expanded", open);
+      toggle.setAttribute("aria-label", open ? "Menü schließen" : "Menü öffnen");
+    };
+    toggle.addEventListener("click", () => setOpen(!nav.classList.contains("is-open")));
+    // Escape schließt das Menü
+    addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && nav.classList.contains("is-open")) { setOpen(false); toggle.focus(); }
     });
   }
 
@@ -46,12 +52,21 @@
   const stack = document.querySelector("[data-stack]");
   if (stack) {
     const cards = [...stack.children];
-    const dots = [...document.querySelectorAll("[data-stack-dots] button")];
+    const dots = [...document.querySelectorAll("[data-stack-dots] .stack-dot")];
+    const pauseBtn = document.querySelector(".stack-pause");
     let order = cards.map((_, i) => i);
     let busy = false;
     const paint = () => {
-      order.forEach((c, pos) => (cards[c].dataset.pos = pos));
-      dots.forEach((d, i) => d.classList.toggle("is-active", i === order[0]));
+      order.forEach((c, pos) => {
+        cards[c].dataset.pos = pos;
+        // Nur die vordere Karte ist per Tastatur erreichbar; hintere über die Punkte
+        cards[c].tabIndex = pos === 0 ? 0 : -1;
+        cards[c].setAttribute("aria-hidden", pos === 0 ? "false" : "true");
+      });
+      dots.forEach((d, i) => {
+        d.classList.toggle("is-active", i === order[0]);
+        d.setAttribute("aria-current", i === order[0] ? "true" : "false");
+      });
     };
     // Karte i nach vorne holen
     const show = (i) => {
@@ -75,14 +90,25 @@
     }));
     dots.forEach((dot, i) => dot.addEventListener("click", () => { show(i); restart(); }));
 
-    let timer = null, hovering = false;
+    let timer = null, hovering = false, focused = false, paused = reduce;
     const restart = () => {
       clearInterval(timer);
-      if (reduce || cards.length < 2) return;
-      timer = setInterval(() => { if (!document.hidden && !hovering) next(); }, 3000);
+      if (paused || cards.length < 2) return;
+      timer = setInterval(() => { if (!document.hidden && !hovering && !focused) next(); }, 3000);
     };
-    stack.addEventListener("mouseenter", () => (hovering = true));
-    stack.addEventListener("mouseleave", () => (hovering = false));
+    const wrap = stack.parentElement;
+    wrap.addEventListener("mouseenter", () => (hovering = true));
+    wrap.addEventListener("mouseleave", () => (hovering = false));
+    wrap.addEventListener("focusin", () => (focused = true));
+    wrap.addEventListener("focusout", () => (focused = false));
+    if (pauseBtn) {
+      const syncPause = () => {
+        pauseBtn.setAttribute("aria-pressed", paused);
+        pauseBtn.setAttribute("aria-label", paused ? "Automatischen Wechsel starten" : "Automatischen Wechsel pausieren");
+      };
+      pauseBtn.addEventListener("click", () => { paused = !paused; syncPause(); restart(); });
+      syncPause();
+    }
     restart();
   }
 
