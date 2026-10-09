@@ -12,7 +12,7 @@ SITE = {
     "behance": "https://www.behance.net/ernestojccarrera",
     "linkedin": "https://www.linkedin.com/in/ernesto-carrera-8a390327a/",
     "year": 2026,
-    "url": "https://carrerapng-prog.github.io/portfolio/",
+    "url": "https://ernestocarrera.de/",
 }
 
 HERO = {
