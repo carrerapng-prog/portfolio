@@ -260,6 +260,10 @@ h1, h2, h3, p { margin: 0; }
 .media-row .media-vertical { max-width: none; }
 .media-row:has(.media-vertical) { max-width: 852px; margin: 0 auto; }
 .media-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.posts-grid { display: grid; gap: 14px; align-items: start; }
+.posts-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.posts-grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.post { border-radius: 10px; box-shadow: var(--shadow); }
 .media-row .media img { height: 100%; object-fit: cover; }
 .block figcaption { max-width: 576px; margin: 22px auto 0; font-size: 14px; line-height: 1.5; letter-spacing: -.01em; color: var(--ink-2); }
 
@@ -341,6 +345,7 @@ h1, h2, h3, p { margin: 0; }
   .service { font-size: 19px; }
   .about-text p { font-size: 19px; }
   .media-row { grid-template-columns: 1fr; }
+  .posts-grid.cols-3, .posts-grid.cols-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .page-head, .project-head { padding-top: 120px; padding-bottom: 64px; }
   .footer-contact, .footer-meta { grid-template-columns: 1fr; gap: 28px; }
   .footer-giant { margin-top: 40px; }

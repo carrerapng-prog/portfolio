@@ -145,7 +145,7 @@ def footer(base):
       <div><p class="label">Social Media</p>{social_links("social social-dark")}</div>
     </div>
     <div class="footer-meta">
-      <div><p class="label">Menü</p><a href="{base}projects/">Arbeiten</a><a href="{base}#branding">Branding</a><a href="{base}#services">Kompetenzen</a></div>
+      <div><p class="label">Menü</p><a href="{base}projects/">Arbeiten</a><a href="{base}#branding">Branding</a><a href="{base}#social-media">Social Media</a><a href="{base}#services">Kompetenzen</a></div>
       <div><p class="label">Rechtliches</p><a href="{base}impressum/">Impressum</a><a href="{base}datenschutz/">Datenschutz</a></div>
       <p class="copy">© {SITE['year']} {SITE['name']}</p>
     </div>
@@ -264,6 +264,14 @@ def page_projects():
 
 
 def media_block(m, base):
+    if m[0] == "posts":
+        _, src, caption, cols = m
+        if len(src) == 1:
+            inner = f'<div class="media media-vertical">{img(base, src[0], caption)}</div>'
+        else:
+            imgs = "".join(f'<div class="media post">{img(base, x, caption if k == 0 else "")}</div>' for k, x in enumerate(src))
+            inner = f'<div class="posts-grid cols-{cols}">{imgs}</div>'
+        return f'<figure class="block reveal">{inner}<figcaption>{escape(caption)}</figcaption></figure>'
     kind, src, caption = m
     if kind.startswith("video"):
         srcs = src if isinstance(src, list) else [src]
@@ -300,7 +308,7 @@ def page_project(p):
 <main id="main">
   <section class="project-head">
     <h1 class="h1 reveal">{p['heading']}</h1>
-    <dl class="meta"><div><dt>Kunde</dt><dd>{escape(p['client'])}</dd></div><div><dt>Jahr</dt><dd>{p['year']}</dd></div></dl>
+    <dl class="meta"><div><dt>Kunde</dt><dd>{escape(p['client'])}</dd></div>{f"<div><dt>Jahr</dt><dd>{p['year']}</dd></div>" if p.get("year") else ""}</dl>
     <div class="project-text">{text}</div>
     <p class="small-label">Meine Aufgaben</p>
     <ul class="chips">{chips}</ul>

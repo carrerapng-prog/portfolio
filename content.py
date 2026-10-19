@@ -51,7 +51,7 @@ ABOUT = [
 
 FOOTER_WORDS = ["gestalten", "entwickeln", "erschaffen"]
 
-# Medienblöcke: ("sheet", [teile], "...") = lange Präsentation ohne Lücken; ("img", [dateien], "Bildunterschrift") oder ("video", datei, "Bildunterschrift").
+# Medienblöcke: ("posts", [bilder], "...", spalten) = Post-Raster; ("sheet", [teile], "...") = lange Präsentation ohne Lücken; ("img", [dateien], "Bildunterschrift") oder ("video", datei, "Bildunterschrift").
 # Zwei Dateien in einer Liste = zweispaltig. "video-vertical" für Hochformat-Videos.
 PROJECTS = [
     {
@@ -167,6 +167,74 @@ PROJECTS = [
              "Higgsfield Genjutsu. Die Person wurde ersetzt, Kamerabewegung, Licht und Perspektive bleiben erhalten."),
             ("video-vertical", "ki-fpv-bergsee.mp4", "FPV-Kamerafahrt im Hochformat: Eine digitale Neon-Landschaft "
              "verwandelt sich im Flug in eine reale Szene an einem Bergsee."),
+        ],
+    },
+    {
+        "slug": "repuestos-guaicaipuro",
+        "name": "Repuestos Guaicaipuro",
+        "category": "Social-Media-Design",
+        "title": "Repuestos Guaicaipuro — Social-Media-Design",
+        "heading": "Repuestos Guaicaipuro<br>— Social Media",
+        "cover": "guaicaipuro-cover.jpg",
+        "client": "Repuestos Guaicaipuro",
+        "text": [
+            "Social-Media-Posts für Repuestos Guaicaipuro, einen Händler für Autoersatzteile in Venezuela. Ziel war es, "
+            "einen eher technischen Produktbereich nahbar und interessant zu machen.",
+            "Neben klaren Produktposts habe ich interaktive Formate entwickelt – Rätsel, Quiz und Umfragen, die zum "
+            "Kommentieren einladen – sowie eine Kampagne zur Fußball-WM und emotionale Posts wie zum Vatertag.",
+        ],
+        "services": ["Social-Media-Design", "Content-Formate", "Bildbearbeitung", "Kampagnen"],
+        "media": [
+            ("posts", ["social/guaicaipuro-base-motor.jpg", "social/guaicaipuro-electroventilador.jpg", "social/guaicaipuro-bomba-freno.jpg", "social/guaicaipuro-portafiltros.jpg"],
+             "Produktposts: Ersatzteile freigestellt und klar inszeniert, mit Fahrzeugmodell und Marke.", 4),
+            ("posts", ["social/guaicaipuro-raetsel-teile.jpg", "social/guaicaipuro-raetsel-oel.jpg", "social/guaicaipuro-raetsel-fehler.jpg", "social/guaicaipuro-raetsel-oelstand.jpg", "social/guaicaipuro-labyrinth.jpg", "social/guaicaipuro-unterschiede.jpg", "social/guaicaipuro-umfrage-farbe.jpg", "social/guaicaipuro-aufstellung.jpg"],
+             "Interaktive Formate: Rätsel, Quiz und Umfragen rund ums Auto, die die Community zum Mitmachen bringen.", 4),
+            ("posts", ["social/guaicaipuro-golf-vs-megane.jpg", "social/guaicaipuro-wm-europa.jpg", "social/guaicaipuro-weltklasse.jpg"],
+             "Kampagne zur Fußball-WM: europäische Autoklassiker treten gegeneinander an.", 3),
+            ("posts", ["social/guaicaipuro-erstes-lenkrad.jpg", "social/guaicaipuro-spiegel.jpg", "social/guaicaipuro-vatertag.jpg"],
+             "Emotionale Posts zum Vatertag: kleine Momente am Steuer zwischen Eltern und Kindern.", 3),
+        ],
+    },
+    {
+        "slug": "suplementos-val",
+        "name": "Suplementos VAL",
+        "category": "Social-Media-Design",
+        "title": "Suplementos VAL — Social-Media-Design",
+        "heading": "Suplementos VAL<br>— Social Media",
+        "cover": "val-cover.jpg",
+        "client": "Suplementos VAL",
+        "text": [
+            "Social-Media-Posts für Suplementos VAL, einen Händler für Sportnahrung, zum Start der Marke Applied "
+            "Nutrition im eigenen Sortiment.",
+            "Für jede Produktgruppe – Proteine, Weight Gainer, Kreatin, Pre-Workout, Multivitamine und Testosteron-"
+            "Booster – habe ich einen Post im gleichen System gestaltet: klare Botschaft oben, Produkte mit Portionsangaben, "
+            "durchgehend in den Markenfarben.",
+        ],
+        "services": ["Social-Media-Design", "Produktkommunikation", "Layout-System"],
+        "media": [
+            ("posts", ["social/val-ankuendigung.jpg"], "Ankündigungspost: Applied Nutrition ist ab sofort erhältlich.", 1),
+            ("posts", ["social/val-proteine.jpg", "social/val-masse.jpg", "social/val-kreatin.jpg", "social/val-pre-workout.jpg", "social/val-multivitamine.jpg", "social/val-testosteron.jpg"],
+             "Produktreihe: ein einheitliches Layout für alle Kategorien, damit der Feed wie aus einem Guss wirkt.", 3),
+        ],
+    },
+    {
+        "slug": "suplementos-fitness-vip",
+        "name": "Suplementos Fitness VIP",
+        "category": "Social-Media-Design",
+        "title": "Suplementos Fitness VIP — Social-Media-Design",
+        "heading": "Suplementos Fitness VIP<br>— Social Media",
+        "cover": "fitnessvip-cover.jpg",
+        "client": "Suplementos Fitness VIP",
+        "text": [
+            "Social-Media-Posts für Suplementos Fitness VIP, einen Vertrieb für Sportnahrung. Der Stil ist bewusst laut "
+            "und energiegeladen – passend zur Zielgruppe im Fitnessstudio.",
+            "Die Posts begleiten eine neue Marke im Sortiment, bewerben Produkt-Kombis und laden mit direkten "
+            "Produktvergleichen zur Interaktion ein.",
+        ],
+        "services": ["Social-Media-Design", "Produktkommunikation", "Bildbearbeitung"],
+        "media": [
+            ("posts", ["social/fitnessvip-basic.jpg", "social/fitnessvip-combo-angry.jpg", "social/fitnessvip-kreatin-vergleich.jpg", "social/fitnessvip-monster-test.jpg"],
+             "Markeneinführung, Kombi-Angebot, Produktvergleich und Produktpost.", 4),
         ],
     },
     {
@@ -329,6 +397,8 @@ GROUPS = [
      "slugs": ["novita-muebles", "issca"]},
     {"id": "branding", "home": True, "heading": ("Branding", "Marken mit Charakter."),
      "slugs": ["hermanos-morales", "maximus-detailing", "braunis", "pb-travel"]},
+    {"id": "social-media", "home": True, "heading": ("Social Media", "Posts mit Wirkung."),
+     "slugs": ["repuestos-guaicaipuro", "suplementos-val", "suplementos-fitness-vip"]},
     {"id": "ki", "home": False, "heading": ("KI-Projekte", "Experimente mit KI."),
      "slugs": ["ki-experimente", "der-ritter", "sora-matcha-co", "venezuela-recap"]},
 ]
