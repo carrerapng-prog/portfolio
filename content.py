@@ -181,7 +181,7 @@ PROJECTS = [
             "Social-Media-Posts für Repuestos Guaicaipuro, einen Händler für Autoersatzteile in Venezuela. Ziel war es, "
             "einen eher technischen Produktbereich nahbar und interessant zu machen.",
             "Neben klaren Produktposts habe ich interaktive Formate entwickelt – Rätsel, Quiz und Umfragen, die zum "
-            "Kommentieren einladen – sowie eine Kampagne zur Fußball-WM und emotionale Posts wie zum Vatertag.",
+            "Kommentieren einladen – sowie emotionale Posts rund um den Vatertag.",
         ],
         "services": ["Social-Media-Design", "Content-Formate", "Bildbearbeitung", "Kampagnen"],
         "media": [
@@ -189,10 +189,9 @@ PROJECTS = [
              "Produktposts: Ersatzteile freigestellt und klar inszeniert, mit Fahrzeugmodell und Marke.", 4),
             ("posts", ["social/guaicaipuro-raetsel-teile.jpg", "social/guaicaipuro-raetsel-oel.jpg", "social/guaicaipuro-raetsel-fehler.jpg", "social/guaicaipuro-raetsel-oelstand.jpg", "social/guaicaipuro-labyrinth.jpg", "social/guaicaipuro-unterschiede.jpg", "social/guaicaipuro-umfrage-farbe.jpg", "social/guaicaipuro-aufstellung.jpg"],
              "Interaktive Formate: Rätsel, Quiz und Umfragen rund ums Auto, die die Community zum Mitmachen bringen.", 4),
-            ("posts", ["social/guaicaipuro-golf-vs-megane.jpg", "social/guaicaipuro-wm-europa.jpg", "social/guaicaipuro-weltklasse.jpg"],
-             "Kampagne zur Fußball-WM: europäische Autoklassiker treten gegeneinander an.", 3),
-            ("posts", ["social/guaicaipuro-erstes-lenkrad.jpg", "social/guaicaipuro-spiegel.jpg", "social/guaicaipuro-vatertag.jpg"],
-             "Emotionale Posts zum Vatertag: kleine Momente am Steuer zwischen Eltern und Kindern.", 3),
+            ("posts", ["social/guaicaipuro-erstes-lenkrad.jpg", "social/guaicaipuro-spiegel.jpg", "social/guaicaipuro-vatertag.jpg",
+                       "social/guaicaipuro-weltklasse.jpg"],
+             "Emotionale Posts rund um den Vatertag: kleine Momente zwischen Eltern und Kindern rund ums Auto.", 4),
         ],
     },
     {
